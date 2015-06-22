@@ -2,7 +2,7 @@ local Widget = require "widgets/widget"
 local SanityBadge = require "widgets/sanitybadge"
 local HealthBadge = require "widgets/healthbadge"
 local HungerBadge = require "widgets/hungerbadge"
-local FitnessBadge = require "widgets/fitnessbadge"s
+local FitnessBadge = require "widgets/fitnessbadge"
 local MoistureMeter = require "widgets/moisturemeter"
 
 local function OnSetPlayerMode(inst, self)
@@ -25,6 +25,11 @@ local function OnSetPlayerMode(inst, self)
         self.inst:ListenForEvent("sanitydelta", self.onsanitydelta, self.owner)
         self:SetSanityPercent(self.owner.replica.sanity:GetPercent())
     end
+
+    if self.onfitnessdelta == nil then
+        self.onfitnessdelta = function(owner, data) self:FitnessDelta(data) end
+        self.inst:ListenForEvent("fitnessdelta", selt.onfitnessdelta, self.owner)
+        self:SetFitnessPercent(self.owner.replica.fitness:GetPercent())
 
     if self.onmoisturedelta == nil then
         self.onmoisturedelta = function(owner, data) self:MoistureDelta(data) end
@@ -70,8 +75,8 @@ local StatusDisplays = Class(Widget, function(self, owner)
     self.heart = self:AddChild(HealthBadge(owner))
     self.heart:SetPosition(40,20,0)
 
-    self.fat = self:AddChild(FitnessBadge(owner))
-    self.fat:SetPosition(-40,-115,0)
+    self.fitness = self:AddChild(FitnessBadge(owner))
+    self.fitness:SetPosition(-40,-115,0)
 
     self.moisturemeter = self:AddChild(MoistureMeter(owner))
     self.moisturemeter:SetPosition(40,-115,0)
@@ -85,18 +90,18 @@ function StatusDisplays:SetGhostMode(ghostmode)
         self.heart:Hide()
         self.stomach:Hide()
         self.brain:Hide()
-        self.fat:Hide()
+        self.fitness:Hide()
         self.moisturemeter:Hide()
 
         self.heart:StopWarning()
         self.stomach:StopWarning()
         self.brain:StopWarning()
-        self.fat:StopWarning()
+        self.fitness:StopWarning()
     else
         self.heart:Show()
         self.stomach:Show()
         self.brain:Show()
-        self.fat:Show()
+        self.fitness:Show()
         self.moisturemeter:Show()
     end
 
@@ -178,12 +183,12 @@ function StatusDisplays:SanityDelta(data)
     end
 end
 
-function StatusDisplays:SetFatPercent(pct)
-    self.fat:SetPercent(pct, self.owner.replica.fat:Average(), self.owner.replica.fat:GetPenaltyPercent())
+function StatusDisplays:SetFitnessPercent(pct)
+    self.fitness:SetPercent(pct, self.owner.replica.fitness:Max())
 end
 
-function StatusDisplays:FatDelta(data)
-    self:SetFatPercent(data.newpercent)
+function StatusDisplays:FitnessDelta(data)
+    self:SetFitnessPercent(data.newpercent)
 end
 
 function StatusDisplays:SetMoisturePercent(pct)
