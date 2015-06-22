@@ -70,7 +70,7 @@ local StatusDisplays = Class(Widget, function(self, owner)
     self.heart:SetPosition(40,20,0)
 
     self.moisturemeter = self:AddChild(MoistureMeter(owner))
-    self.moisturemeter:SetPosition(-40,-115,0)
+    self.moisturemeter:SetPosition(40,-115,0)
 
     self.modetask = nil
     self:SetGhostMode(false)
