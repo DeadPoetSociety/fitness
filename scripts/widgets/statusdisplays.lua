@@ -2,6 +2,7 @@ local Widget = require "widgets/widget"
 local SanityBadge = require "widgets/sanitybadge"
 local HealthBadge = require "widgets/healthbadge"
 local HungerBadge = require "widgets/hungerbadge"
+local FitnessBadge = require "widgets/fitnessbadge"s
 local MoistureMeter = require "widgets/moisturemeter"
 
 local function OnSetPlayerMode(inst, self)
@@ -69,6 +70,9 @@ local StatusDisplays = Class(Widget, function(self, owner)
     self.heart = self:AddChild(HealthBadge(owner))
     self.heart:SetPosition(40,20,0)
 
+    self.fat = self:AddChild(FitnessBadge(owner))
+    self.fat:SetPosition(-40,-115,0)
+
     self.moisturemeter = self:AddChild(MoistureMeter(owner))
     self.moisturemeter:SetPosition(40,-115,0)
 
@@ -81,15 +85,18 @@ function StatusDisplays:SetGhostMode(ghostmode)
         self.heart:Hide()
         self.stomach:Hide()
         self.brain:Hide()
+        self.fat:Hide()
         self.moisturemeter:Hide()
 
         self.heart:StopWarning()
         self.stomach:StopWarning()
         self.brain:StopWarning()
+        self.fat:StopWarning()
     else
         self.heart:Show()
         self.stomach:Show()
         self.brain:Show()
+        self.fat:Show()
         self.moisturemeter:Show()
     end
 
@@ -169,6 +176,14 @@ function StatusDisplays:SanityDelta(data)
             TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/sanity_down")
         end
     end
+end
+
+function StatusDisplays:SetFatPercent(pct)
+    self.fat:SetPercent(pct, self.owner.replica.fat:Average(), self.owner.replica.fat:GetPenaltyPercent())
+end
+
+function StatusDisplays:FatDelta(data)
+    self:SetFatPercent(data.newpercent)
 end
 
 function StatusDisplays:SetMoisturePercent(pct)
