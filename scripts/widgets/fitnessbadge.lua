@@ -6,6 +6,10 @@ local FitnessBadge = Class(Badge, function(self, owner)
 	self:StartUpdating()
 end)
 
+function FitnessBadge:SetPercent(val, max)
+	Badge.SetPercent(self, val, max)
+end
+
 function FitnessBadge:OnUpdate(dt)
 end
 

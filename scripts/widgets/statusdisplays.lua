@@ -28,8 +28,9 @@ local function OnSetPlayerMode(inst, self)
 
     if self.onfitnessdelta == nil then
         self.onfitnessdelta = function(owner, data) self:FitnessDelta(data) end
-        self.inst:ListenForEvent("fitnessdelta", selt.onfitnessdelta, self.owner)
+        self.inst:ListenForEvent("fitnessdelta", self.onfitnessdelta, self.owner)
         self:SetFitnessPercent(self.owner.replica.fitness:GetPercent())
+    end
 
     if self.onmoisturedelta == nil then
         self.onmoisturedelta = function(owner, data) self:MoistureDelta(data) end
